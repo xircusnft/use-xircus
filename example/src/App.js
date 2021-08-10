@@ -1,11 +1,13 @@
 import React from 'react'
-import { useMyHook } from 'use-xircus'
+import useGlobal from './hooks/useGlobal';
 
 const App = () => {
-  const example = useMyHook()
+  const [state, actions] = useGlobal(['username'])
+
   return (
     <div>
-      {example}
+      <h1>{state.username}</h1>
+      <button onClick={() => actions.update()}>Update</button>
     </div>
   )
 }

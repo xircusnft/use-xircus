@@ -1,21 +1,6 @@
 import * as React from 'react'
+import * as xStore from './useStore';
+import * as xGraph from './useGraph';
 
-export const useMyHook = () => {
-  let [{
-    counter
-  }, setState] = React.useState({
-    counter: 0
-  })
-
-  React.useEffect(() => {
-    let interval = window.setInterval(() => {
-      counter++
-      setState({counter})
-    }, 1000)
-    return () => {
-      window.clearInterval(interval)
-    }
-  }, [])
-
-  return counter
-}
+export const globalStore = xStore.default;
+export const useGraph = xGraph.default;
