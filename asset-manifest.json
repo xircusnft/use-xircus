@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/use-xircus/static/css/main.2c6a48fe.chunk.css",
+    "main.js": "/use-xircus/static/js/main.f4517d45.chunk.js",
+    "main.js.map": "/use-xircus/static/js/main.f4517d45.chunk.js.map",
+    "runtime-main.js": "/use-xircus/static/js/runtime-main.0f784ed4.js",
+    "runtime-main.js.map": "/use-xircus/static/js/runtime-main.0f784ed4.js.map",
+    "static/js/2.39bdb4e1.chunk.js": "/use-xircus/static/js/2.39bdb4e1.chunk.js",
+    "static/js/2.39bdb4e1.chunk.js.map": "/use-xircus/static/js/2.39bdb4e1.chunk.js.map",
+    "index.html": "/use-xircus/index.html",
+    "precache-manifest.47a2546b03160f9b69505c3abc8c2849.js": "/use-xircus/precache-manifest.47a2546b03160f9b69505c3abc8c2849.js",
+    "service-worker.js": "/use-xircus/service-worker.js",
+    "static/css/main.2c6a48fe.chunk.css.map": "/use-xircus/static/css/main.2c6a48fe.chunk.css.map",
+    "static/js/2.39bdb4e1.chunk.js.LICENSE.txt": "/use-xircus/static/js/2.39bdb4e1.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0f784ed4.js",
+    "static/js/2.39bdb4e1.chunk.js",
+    "static/css/main.2c6a48fe.chunk.css",
+    "static/js/main.f4517d45.chunk.js"
+  ]
+}
