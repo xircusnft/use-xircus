@@ -1,4 +1,3 @@
-import { API_URL, STORAGE_NAME } from '../config'
 import fetcher from '../fetcher'
 
 const authActions = {
