@@ -4,6 +4,14 @@
 
 [![NPM](https://img.shields.io/npm/v/use-xircus.svg)](https://www.npmjs.com/package/use-xircus) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Features
+
+- Global State Management
+- Graph Connection
+- Xircus Authentication
+- Smart Contract Calls
+
+
 ## Install
 
 ```bash
