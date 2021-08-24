@@ -1,6 +1,5 @@
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo } from 'react'
 import Web3 from 'web3'
-import useGlobal from './useGlobal'
 import { useWallet } from 'use-wallet'
 
 const useWeb3 = () => {

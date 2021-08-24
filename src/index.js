@@ -1,8 +1,11 @@
-import * as React from 'react'
-import * as xGlobal from './useGlobal';
-import * as xStore from './useStore';
-import * as xGraph from './useGraph';
+import * as xStore from './useStore'
+import * as xActions from './appActions'
+import * as xState from './appState'
+import * as xContract from './useContract'
 
-export const globalStore = xStore.default;
-export const useGlobal = xGlobal.default;
-export const useGraph = xGraph.default;
+// export * from './useContract'
+
+export const contracts = xContract
+export const appActions = xActions.default
+export const appState = xState.default
+export const globalStore = xStore.default

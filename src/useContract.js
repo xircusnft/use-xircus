@@ -1,4 +1,10 @@
-import useWeb3 from './useWeb3';
+import useWeb3 from './useWeb3'
+import pairAbi from './contracts/LPPair.json'
+import factoryAbi from './contracts/LPFactory.json'
+import routerAbi from './contracts/LPRouter.json'
+import tokenAbi from './contracts/Token.json'
+import centerAbi from './contracts/XircusCenterFeatClonable.json'
+import metaAbi from './contracts/XircusMetaFeatClonable.json'
 
 export const filterMethods = (methods) => Object.keys(methods)
   .filter(m => !m.startsWith('0x'))
@@ -9,7 +15,7 @@ export const useLPPair = () => {
 
   const getPair = async(address) => {
     if (address && !address.startsWith('0x') && address.length != 42) return false
-    const pair = new web3.eth.Contract(require('../contracts/LPPair.json'), address)
+    const pair = new web3.eth.Contract(pairAbi, address)
     const name = await pair.methods.name().call()
     const token0 = await pair.methods.token0().call()
     const token1 = await pair.methods.token1().call()
@@ -39,7 +45,7 @@ export const useLPFactory = (address) => {
   const web3 = useWeb3()
 
   const getFactory = async(address) => {
-    const dpx = new web3.eth.Contract(require('../contracts/LPFactory.json'), address)
+    const dpx = new web3.eth.Contract(factoryAbi, address)
     return filterMethods(dpx.methods)
   }
 
@@ -50,7 +56,7 @@ export const useLPRouter = () => {
   const web3 = useWeb3()
 
   const getRouter = async(address) => {
-    const router = new web3.eth.Contract(require('../contracts/LPRouter.json'), address)
+    const router = new web3.eth.Contract(routerAbi, address)
 
     return {
       ...filterMethods(router.methods),
@@ -65,7 +71,7 @@ export const useToken = () => {
   const web3 = useWeb3()
 
   const getToken = async(address, full = false) => {
-    const token = new web3.eth.Contract(require('../contracts/Token.json'), address)
+    const token = new web3.eth.Contract(tokenAbi, address)
 
     return {
       ...(full ? filterMethods(token.methods) : { balanceOf: token.methods.balanceOf }),
@@ -77,7 +83,7 @@ export const useToken = () => {
   }
 
   const getNFTToken = async(address) => {
-    const token = new web3.eth.Contract(require('../contracts/Token.json'), address)
+    const token = new web3.eth.Contract(tokenAbi, address)
 
     return {
       name: await token.methods.name().call(),
@@ -93,12 +99,11 @@ export const useToken = () => {
   return { web3, getToken, getTokenBalance, getNFTToken }
 }
 
-
 export const useCenter = () => {
   const web3 = useWeb3()
 
   const getCenter = async(address, full = true) => {
-    const center = new web3.eth.Contract(require('../contracts/abi/XircusCenterFeatClonable.json'), address)
+    const center = new web3.eth.Contract(centerAbi, address)
     const market = Object.values(await center.methods.getMarket().call())
 
     return {
@@ -121,89 +126,89 @@ export const useCenter = () => {
     web3
   }
 }
-
-export const useCollection = () => {
-  const web3 = useWeb3()
-
-  // GET ALL DEPLOYER METHODS
-  const get721Deployer = async(deployer) => {
-    const dpx = new web3.eth.Contract(require('../contracts/abi/Xircus721Deployer.json'), deployer)
-    return filterMethods(dpx.methods)
-  }
-
-  const get1155Deployer = async(deployer) => {
-    const dpx = new web3.eth.Contract(require('../contracts/abi/Xircus1155Deployer.json'), deployer)
-    return filterMethods(dpx.methods)
-  }
-
-  const getUser721Collections = async(deployer, account) => {
-    const dpx = await get721Deployer(deployer)
-    const collections = []
-    for (let address of await dpx.getOwnerCollections(account).call()) {
-      collections.push(await get721Collection(address))
-    }
-    return collections
-  }
-
-  const getUser1155Collections = async(deployer, account) => {
-    const dpx = await get1155Deployer(deployer)
-    const collections = []
-    for (let address of await dpx.getOwnerCollections(account).call()) {
-      collections.push(await get1155Collection(address))
-    }
-    return collections
-  }
-
-  const get721Collection = async(address) => {
-    const cx = new web3.eth.Contract(require('../contracts/abi/Xircus721.json'), address)
-    return {
-      ...filterMethods(cx.methods),
-      address,
-      multi: false,
-      name: await cx.methods.name().call(),
-      symbol: await cx.methods.symbol().call(),
-      center: await cx.methods.center().call(),
-      token: await cx.methods.token().call(),
-      usdToken: await cx.methods.usdToken().call(),
-      deployer: await cx.methods.deployer().call(),
-      totalSupply: await cx.methods.totalSupply().call(),
-      // TODO: commission totals
-    }
-  }
-
-  const get1155Collection = async(address) => {
-    const cx = new web3.eth.Contract(require('../contracts/abi/Xircus1155.json'), address)
-    return {
-      ...filterMethods(cx.methods),
-      address,
-      multi: true,
-      name: await cx.methods.name().call(),
-      symbol: await cx.methods.symbol().call(),
-      center: await cx.methods.center().call(),
-      token: await cx.methods.token().call(),
-      usdToken: await cx.methods.usdToken().call(),
-      deployer: await cx.methods.deployer().call(),
-      totalSupply: await cx.methods.totalSupply().call(),
-      // TODO: commission totals
-    }
-  }
-
-  return {
-    get721Deployer,
-    getUser721Collections,
-    get1155Deployer,
-    getUser1155Collections,
-    get721Collection,
-    get1155Collection,
-  }
-}
+//
+// export const useCollection = () => {
+//   const web3 = useWeb3()
+//
+//   // GET ALL DEPLOYER METHODS
+//   const get721Deployer = async(deployer) => {
+//     const dpx = new web3.eth.Contract(require('../contracts/abi/Xircus721Deployer.json'), deployer)
+//     return filterMethods(dpx.methods)
+//   }
+//
+//   const get1155Deployer = async(deployer) => {
+//     const dpx = new web3.eth.Contract(require('../contracts/abi/Xircus1155Deployer.json'), deployer)
+//     return filterMethods(dpx.methods)
+//   }
+//
+//   const getUser721Collections = async(deployer, account) => {
+//     const dpx = await get721Deployer(deployer)
+//     const collections = []
+//     for (let address of await dpx.getOwnerCollections(account).call()) {
+//       collections.push(await get721Collection(address))
+//     }
+//     return collections
+//   }
+//
+//   const getUser1155Collections = async(deployer, account) => {
+//     const dpx = await get1155Deployer(deployer)
+//     const collections = []
+//     for (let address of await dpx.getOwnerCollections(account).call()) {
+//       collections.push(await get1155Collection(address))
+//     }
+//     return collections
+//   }
+//
+//   const get721Collection = async(address) => {
+//     const cx = new web3.eth.Contract(require('../contracts/abi/Xircus721.json'), address)
+//     return {
+//       ...filterMethods(cx.methods),
+//       address,
+//       multi: false,
+//       name: await cx.methods.name().call(),
+//       symbol: await cx.methods.symbol().call(),
+//       center: await cx.methods.center().call(),
+//       token: await cx.methods.token().call(),
+//       usdToken: await cx.methods.usdToken().call(),
+//       deployer: await cx.methods.deployer().call(),
+//       totalSupply: await cx.methods.totalSupply().call(),
+//       // TODO: commission totals
+//     }
+//   }
+//
+//   const get1155Collection = async(address) => {
+//     const cx = new web3.eth.Contract(require('../contracts/abi/Xircus1155.json'), address)
+//     return {
+//       ...filterMethods(cx.methods),
+//       address,
+//       multi: true,
+//       name: await cx.methods.name().call(),
+//       symbol: await cx.methods.symbol().call(),
+//       center: await cx.methods.center().call(),
+//       token: await cx.methods.token().call(),
+//       usdToken: await cx.methods.usdToken().call(),
+//       deployer: await cx.methods.deployer().call(),
+//       totalSupply: await cx.methods.totalSupply().call(),
+//       // TODO: commission totals
+//     }
+//   }
+//
+//   return {
+//     get721Deployer,
+//     getUser721Collections,
+//     get1155Deployer,
+//     getUser1155Collections,
+//     get721Collection,
+//     get1155Collection,
+//   }
+// }
 
 
 export const useMeta = (address) => {
   const web3 = useWeb3()
 
   const getMeta = async(manager) => {
-    const contract = new web3.eth.Contract(require('../contracts/abi/XircusMetaFeatClonable.json'), manager)
+    const contract = new web3.eth.Contract(metaAbi, manager)
 
     return {
       ...filterMethods(contract.methods),

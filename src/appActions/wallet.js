@@ -1,4 +1,3 @@
-
 const walletActions = {
   sendTransaction: async(store, wallet, contract, data, value, gasPrice) => {
     return await wallet.ethereum.request({

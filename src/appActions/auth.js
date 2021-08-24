@@ -1,11 +1,12 @@
-import fetcher from '../fetcher'
+import localstore from 'store'
 
 const authActions = {
   saveState: (store) => {
-    localstore.set(STORAGE_NAME, store.state)
+    localstore.set(store.state.config.storage, store.state)
   },
   getAddress: async(store, address) => {
-    return await fetcher('POST', `${store.state.config.apiUrl}/user/${address}`)
+    const reply = await fetch(`${store.state.config.apiUrl}/user/${address}`, { method: 'POST' })
+    return await reply.json()
   },
   login: async(store, wallet) => {
     const reply = await store.actions.getAddress(wallet.account)
@@ -14,8 +15,9 @@ const authActions = {
     }
     return reply
   },
-  unsign: (store) => {
-    store.setState({ isSigned: false }, store.actions.saveState)
+  logout: (store, wallet) => {
+    wallet.reset()
+    store.setState({ isSigned: false, user: false, token: false }, store.actions.saveState)
   },
   sign: async(store, wallet) => {
     let reply = await store.actions.getAddress(wallet.account)
@@ -32,7 +34,8 @@ const authActions = {
     }
   },
   getReferralByCode: async(store, code) => {
-    return await request('GET', `${store.state.config.apiUrl}/code/${code}`)
+    const reply = await fetch(`${store.state.config.apiUrl}/code/${code}`)
+    return await reply.json()
   },
 }
 

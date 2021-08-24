@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import external from 'rollup-plugin-peer-deps-external'
 import resolve from 'rollup-plugin-node-resolve'
 import url from 'rollup-plugin-url'
-
+import json from '@rollup/plugin-json'
 import pkg from './package.json'
 
 export default {
@@ -21,12 +21,19 @@ export default {
     }
   ],
   plugins: [
-    external(),
+    json(),
+    external({ includeDependencies: true }),
     url({ exclude: ['**/*.svg'] }),
     babel({
-      exclude: 'node_modules/**'
+      exclude: /node_modules/
     }),
     resolve(),
-    commonjs()
-  ]
+    commonjs({
+      include: /node_modules/,
+      namedExports: {
+        'node_modules/prop-types/index.js': ['number', 'node', 'objectOf', 'object']
+      }
+    })
+  ],
+  // external: ['react', 'react-dom', 'next']
 }
