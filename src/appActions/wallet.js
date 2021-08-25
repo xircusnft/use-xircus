@@ -9,7 +9,7 @@ const walletActions = {
         value
       }]
     })
-  },
+  }
 }
 
 export default walletActions

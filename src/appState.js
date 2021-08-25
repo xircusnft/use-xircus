@@ -7,11 +7,15 @@ export const appState = {
   },
   status: 'Status Message',
   loading: false,
+
   isSigned: false,
   user: false,
   token: false,
-  deployer: false,
+
+  layout: 'Standard',
   market: false,
+
+  deployers: false,
   networkId: 56,
   network: {
     networkId: 56,

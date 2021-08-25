@@ -39,14 +39,10 @@ const networkActions = {
         })
       }
 
-      // const shouldReload = (store.state.networkId != network.networkId)
-
       store.setState({
         networkId: network.networkId,
         network,
       }, store.actions.saveState)
-
-      // if (shouldReload) window.location.reload()
 
     } catch (e) {
       console.log("FAILED TO CHANGE NETWORK", e)
