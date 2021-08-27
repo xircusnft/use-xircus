@@ -11,7 +11,7 @@ const authActions = {
   login: async(store, wallet) => {
     const reply = await store.actions.getAddress(wallet.account)
     if (reply.status) {
-      store.setState({ isSigned: true, user: reply.user })
+      store.setState({ isSigned: true, user: reply.user, token: false })
     }
     return reply
   },
@@ -29,9 +29,25 @@ const authActions = {
         params: [msg, wallet.account]
       })
       if (signature) {
-        await store.actions.login(wallet.account, signature)
+        await store.actions.signAddress(wallet.account, signature)
       }
     }
+  },
+  signAddress: async(store, address, signature) => {
+    let reply = await fetch(`${store.state.config.apiUrl}/user/${address}/sign`, {
+      method: 'POST',
+      body: JSON.stringify({ signature })
+    })
+    reply = await reply.json()
+    if (reply.status) {
+      store.setState({
+        isSigned: true,
+        token: reply.token,
+        wallet: reply.user.address,
+        user: reply.user
+      })
+    }
+    return reply
   },
   getReferralByCode: async(store, code) => {
     const reply = await fetch(`${store.state.config.apiUrl}/code/${code}`)
