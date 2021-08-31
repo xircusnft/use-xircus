@@ -5,6 +5,10 @@ import routerAbi from './contracts/LPRouter.json'
 import tokenAbi from './contracts/Token.json'
 import centerAbi from './contracts/XircusCenterFeatClonable.json'
 import metaAbi from './contracts/XircusMetaFeatClonable.json'
+import deployer721 from './contracts/Xircus721Deployer.json'
+import deployer1155 from './contracts/Xircus1155Deployer.json'
+import single721 from './contracts/Xircus721.json'
+import multi1155 from './contracts/Xircus1155.json'
 
 export const filterMethods = (methods) => Object.keys(methods)
   .filter(m => !m.startsWith('0x'))
@@ -126,82 +130,81 @@ export const useCenter = () => {
     web3
   }
 }
-//
-// export const useCollection = () => {
-//   const web3 = useWeb3()
-//
-//   // GET ALL DEPLOYER METHODS
-//   const get721Deployer = async(deployer) => {
-//     const dpx = new web3.eth.Contract(require('../contracts/abi/Xircus721Deployer.json'), deployer)
-//     return filterMethods(dpx.methods)
-//   }
-//
-//   const get1155Deployer = async(deployer) => {
-//     const dpx = new web3.eth.Contract(require('../contracts/abi/Xircus1155Deployer.json'), deployer)
-//     return filterMethods(dpx.methods)
-//   }
-//
-//   const getUser721Collections = async(deployer, account) => {
-//     const dpx = await get721Deployer(deployer)
-//     const collections = []
-//     for (let address of await dpx.getOwnerCollections(account).call()) {
-//       collections.push(await get721Collection(address))
-//     }
-//     return collections
-//   }
-//
-//   const getUser1155Collections = async(deployer, account) => {
-//     const dpx = await get1155Deployer(deployer)
-//     const collections = []
-//     for (let address of await dpx.getOwnerCollections(account).call()) {
-//       collections.push(await get1155Collection(address))
-//     }
-//     return collections
-//   }
-//
-//   const get721Collection = async(address) => {
-//     const cx = new web3.eth.Contract(require('../contracts/abi/Xircus721.json'), address)
-//     return {
-//       ...filterMethods(cx.methods),
-//       address,
-//       multi: false,
-//       name: await cx.methods.name().call(),
-//       symbol: await cx.methods.symbol().call(),
-//       center: await cx.methods.center().call(),
-//       token: await cx.methods.token().call(),
-//       usdToken: await cx.methods.usdToken().call(),
-//       deployer: await cx.methods.deployer().call(),
-//       totalSupply: await cx.methods.totalSupply().call(),
-//       // TODO: commission totals
-//     }
-//   }
-//
-//   const get1155Collection = async(address) => {
-//     const cx = new web3.eth.Contract(require('../contracts/abi/Xircus1155.json'), address)
-//     return {
-//       ...filterMethods(cx.methods),
-//       address,
-//       multi: true,
-//       name: await cx.methods.name().call(),
-//       symbol: await cx.methods.symbol().call(),
-//       center: await cx.methods.center().call(),
-//       token: await cx.methods.token().call(),
-//       usdToken: await cx.methods.usdToken().call(),
-//       deployer: await cx.methods.deployer().call(),
-//       totalSupply: await cx.methods.totalSupply().call(),
-//       // TODO: commission totals
-//     }
-//   }
-//
-//   return {
-//     get721Deployer,
-//     getUser721Collections,
-//     get1155Deployer,
-//     getUser1155Collections,
-//     get721Collection,
-//     get1155Collection,
-//   }
-// }
+
+export const useCollection = () => {
+  const web3 = useWeb3()
+
+  // GET ALL DEPLOYER METHODS
+  const get721Deployer = async(deployer) => {
+    const dpx = new web3.eth.Contract(deployer721, deployer)
+    return filterMethods(dpx.methods)
+  }
+
+  const get1155Deployer = async(deployer) => {
+    const dpx = new web3.eth.Contract(deployer1155, deployer)
+    return filterMethods(dpx.methods)
+  }
+
+  const getUser721Collections = async(deployer, account) => {
+    const dpx = await get721Deployer(deployer)
+    const collections = []
+    for (let address of await dpx.getOwnerCollections(account).call()) {
+      collections.push(await get721Collection(address))
+    }
+    return collections
+  }
+
+  const getUser1155Collections = async(deployer, account) => {
+    const dpx = await get1155Deployer(deployer)
+    const collections = []
+    for (let address of await dpx.getOwnerCollections(account).call()) {
+      collections.push(await get1155Collection(address))
+    }
+    return collections
+  }
+
+  const get721Collection = async(address) => {
+    const cx = new web3.eth.Contract(single721, address)
+    return {
+      ...filterMethods(cx.methods),
+      address,
+      multi: false,
+      name: await cx.methods.name().call(),
+      symbol: await cx.methods.symbol().call(),
+      center: await cx.methods.center().call(),
+      token: await cx.methods.token().call(),
+      usdToken: await cx.methods.usdToken().call(),
+      deployer: await cx.methods.deployer().call(),
+      totalSupply: await cx.methods.totalSupply().call(),
+      // TODO: commission totals
+    }
+  }
+
+  const get1155Collection = async(address) => {
+    const cx = new web3.eth.Contract(multi1155, address)
+    return {
+      ...filterMethods(cx.methods),
+      address,
+      name: await cx.methods.name().call(),
+      symbol: await cx.methods.symbol().call(),
+      center: await cx.methods.center().call(),
+      token: await cx.methods.token().call(),
+      usdToken: await cx.methods.usdToken().call(),
+      deployer: await cx.methods.deployer().call(),
+      totalSupply: await cx.methods.totalSupply().call(),
+      // TODO: commission totals
+    }
+  }
+
+  return {
+    get721Deployer,
+    getUser721Collections,
+    get1155Deployer,
+    getUser1155Collections,
+    get721Collection,
+    get1155Collection,
+  }
+}
 
 
 export const useMeta = (address) => {

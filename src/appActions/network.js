@@ -16,9 +16,13 @@ const networkActions = {
       network: NETWORKS.find(n => n.networkId == networkId)
     }
   },
+  setNetwork: (store, networkId) => {
+    const networks = store.actions.getNetworks()
+    const network = networks.find(n => n.networkId == networkId)
+    store.setState({ network })
+  },
   changeNetwork: async(store, wallet, network) => {
     try {
-
       if (network.networkId == 1) {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',

@@ -13,17 +13,15 @@ const itemActions = {
     return await reply.json()
   },
   addItem: async(store, item) => {
-    const reply = await fetch(`${store.state.config.ipfsUrl}/item`, {
-      method: 'POST',
-      body: JSON.stringify({ ...item, chainId: store.state.networkId }),
-      headers: { Authorization: `Bearer ${store.state.token}` }
-    })
-    return await reply.json()
+    return await store.actions.request(
+      'POST',
+      `${store.state.config.ipfsUrl}/item`,
+      { ...item, chainId: store.state.networkId },
+      { Authorization: `Bearer ${store.state.token}` }
+    )
   },
-  getItems: async(store, url, filters) => {
-    // TODO: Add query builder
-    const reply = await fetch(`${store.state.config.ipfsUrl}/marketplace/${url}/items`)
-    return await reply.json()
+  getItems: async(store, url, filters = {}) => {
+    return await store.actions.requestApi('GET', `${url}/items`, filters)
   }
 }
 

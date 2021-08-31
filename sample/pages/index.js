@@ -1,14 +1,13 @@
 import { useState, useEffect, Fragment } from 'react'
 import {
   Box, Heading, Button, HStack, VStack, Container, Textarea, Input,
-  Menu, MenuButton, MenuList, MenuItem,
+  Menu, MenuButton, MenuList, MenuItem, Select,
   useColorMode
 } from '@chakra-ui/react'
 import useGlobal from '../hooks/useGlobal'
 import { useWallet } from 'use-wallet'
 import * as xircus from 'use-xircus'
 
-console.log("XIRCUS", xircus)
 
 export default function Home() {
   const wallet = useWallet()
@@ -49,7 +48,7 @@ export default function Home() {
   const handleWalletConnect = () => wallet.connect('walletconnect')
   const handleDisconnect = () => actions.logout(wallet)
 
-  console.log("CURRENT STATE", state)
+  console.log("CURRENT STATE", state, actions)
 
   return (
     <Container maxW="container.md" pt={10}>
@@ -60,7 +59,7 @@ export default function Home() {
         <MenuList>
           {
             networks.map(network =>
-              <MenuItem key={network.networkId} onClick={() => actions.changeNetwork(wallet, network)}>
+              <MenuItem key={network.networkId} onClick={() => actions.setNetwork(network.networkId)}>
                 {network.name}
               </MenuItem>
             )
@@ -85,6 +84,7 @@ export default function Home() {
       <Input value={wallet.account} mb={6} />
       <Input type="file" onChange={handleFileChange} />
       <Textarea value={JSON.stringify(state.user)} mb={6} />
+      <Textarea value={JSON.stringify(state.network)} mb={6} />      
       <Button onClick={handleUploadMeta}>Submit Meta</Button>
     </Container>
   )

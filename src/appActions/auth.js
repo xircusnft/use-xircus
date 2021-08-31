@@ -32,6 +32,7 @@ const authActions = {
         await store.actions.signAddress(wallet.account, signature)
       }
     }
+    return reply
   },
   signAddress: async(store, address, signature) => {
     let reply = await fetch(`${store.state.config.apiUrl}/user/${address}/sign`, {
