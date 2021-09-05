@@ -9,17 +9,22 @@ export const appState = {
   loading: false,
 
   isSigned: false,
+  isAuthed: false,
   user: false,
   token: false,
 
   layout: 'Standard',
   market: false,
+  current: false,
 
   deployers: false,
+  networks: [],
+  networkSet: false,
   networkId: 56,
   network: {
     networkId: 56,
     active: true,
+    alias: 'bsc',
     name: 'Binance Smart Chain',
     symbol: 'bnb',
     chainId: '0x38',

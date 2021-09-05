@@ -1,21 +1,12 @@
-const querify = (params) => Object
-  .keys(params)
-  .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
-  .join('&')
+import localstore from 'store'
+import { querify } from './utils'
 
 const appActions = {
   config: (store, config) => {
-    if (store.state.env == 'production' && config.apiUrl.startsWith('https://')) return;
     store.setState({ config }, store.actions.saveState)
   },
-  setMarket: (store, market) => {
-    if (market && market.name) {
-      store.setState({ market, layout: market.layout }, store.actions.saveState)
-    }
-  },
-  getMarket: async(store, url) => {
-    const reply = await fetch(`${store.state.config.apiUrl}/marketplace/${url}`)
-    return await reply.json()
+  saveState: (store) => {
+    localstore.set(store.state.config.storage, store.state)
   },
   switchLayout: (store, layout) => {
     if (layout) {

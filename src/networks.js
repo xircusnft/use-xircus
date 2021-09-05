@@ -2,6 +2,7 @@ export const NETWORKS = [
   {
     networkId: 1,
     active: false,
+    alias: 'ether',
     name: 'Ethereum Mainnet',
     symbol: 'eth',
     chainId: '0x1',
@@ -17,6 +18,7 @@ export const NETWORKS = [
   {
     networkId: 56,
     active: true,
+    alias: 'bsc',
     name: 'Binance Smart Chain',
     env: 'production',
     symbol: 'bnb',
@@ -33,6 +35,7 @@ export const NETWORKS = [
   {
     networkId: 97,
     active: true,
+    alias: 'bsc',
     name: 'Binance Test Chain',
     env: 'development',
     symbol: 'bnb',
@@ -49,6 +52,7 @@ export const NETWORKS = [
   {
     networkId: 137,
     active: true,
+    alias: 'polygon',
     name: 'Polygon Matic Mainnet',
     env: 'production',
     symbol: 'matic',
@@ -65,6 +69,7 @@ export const NETWORKS = [
   {
     networkId: 250,
     active: false,
+    alias: 'fantom',
     name: 'Fantom Opera Mainnet',
     env: 'production',
     symbol: 'ftm',

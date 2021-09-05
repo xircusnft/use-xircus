@@ -6,32 +6,61 @@ const networkActions = {
       ? NETWORKS
       : NETWORKS.filter(n => n.env == store.state.env)
   },
-  getNetwork: async(store) => {
+  getNetwork: async(store, wallet) => {
     let networkId = 56
-    if (window.ethereum) {
-      networkId = web3.utils.hexToNumber(window.ethereum.chainId)
+    if (wallet.ethereum) {
+      networkId = web3.utils.hexToNumber(wallet.ethereum.chainId)
     }
     return {
       networkId,
       network: NETWORKS.find(n => n.networkId == networkId)
     }
   },
+  setNetworks: (store, networkIds = []) => {
+    const networks = store.actions.getNetworks()
+    if (networks && networks.length > 0) {
+      store.setState(
+        { networks: networks.filter(n => networkIds.indexOf(n.networkId) > -1) },
+        store.actions.saveState
+      )
+    }
+  },
+  selectNetwork: (store, network) => {
+    let market = store.state.market
+    if (market) {
+      const current = market.networks.find(n => n.chainId == network.networkId)
+      const layout = current.layout
+      store.setState(
+        {
+          network,
+          current,
+          layout,
+          networkId: network.networkId,
+          isSigned: false,
+          networkSet: true
+        },
+        store.actions.saveState
+      )
+    }
+  },
   setNetwork: (store, networkId) => {
     const networks = store.actions.getNetworks()
     const network = networks.find(n => n.networkId == networkId)
-    store.setState({ network })
+    if (network) {
+      store.setState({ network }, store.actions.saveState)
+    }
   },
   changeNetwork: async(store, wallet, network) => {
     try {
       if (network.networkId == 1) {
-        await window.ethereum.request({
+        await wallet.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{
             chainId: network.chainId,
           }]
         })
       } else {
-        await window.ethereum.request({
+        await wallet.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [{
             chainId: network.chainId,
@@ -43,9 +72,17 @@ const networkActions = {
         })
       }
 
+      const market = store.state.market
+      const current = market.networks.find(n => n.chainId == network.networkId)
+      const layout = current.layout
+
       store.setState({
         networkId: network.networkId,
         network,
+        current,
+        layout,
+        isSigned: false,
+        networkSet: true
       }, store.actions.saveState)
 
     } catch (e) {

@@ -79,6 +79,7 @@ export const useToken = () => {
 
     return {
       ...(full ? filterMethods(token.methods) : { balanceOf: token.methods.balanceOf }),
+      address,
       name: await token.methods.name().call(),
       symbol: await token.methods.symbol().call(),
       decimals: await token.methods.decimals().call(),
@@ -88,10 +89,24 @@ export const useToken = () => {
 
   const getNFTToken = async(address) => {
     const token = new web3.eth.Contract(tokenAbi, address)
-
     return {
+      address,
       name: await token.methods.name().call(),
       symbol: await token.methods.symbol().call(),
+    }
+  }
+
+  const getCollectionToken = async(address) => {
+    const token = new web3.eth.Contract(single721, address)
+
+    return {
+      address,
+      name: await token.methods.name().call(),
+      symbol: await token.methods.symbol().call(),
+      supply: await token.methods.totalSupply().call(),
+      category: await token.methods.category().call(),
+      token: await token.methods.token().call(),
+      usd: await token.methods.usdToken().call()
     }
   }
 
@@ -100,15 +115,36 @@ export const useToken = () => {
     return await token.balanceOf(account).call()
   }
 
-  return { web3, getToken, getTokenBalance, getNFTToken }
+  return {
+    web3,
+    getToken,
+    getTokenBalance,
+    getCollectionToken,
+    getNFTToken
+  }
 }
 
 export const useCenter = () => {
   const web3 = useWeb3()
 
-  const getCenter = async(address, full = true) => {
+  const getCenter = async(address, payments = false, full = true) => {
     const center = new web3.eth.Contract(centerAbi, address)
     const market = Object.values(await center.methods.getMarket().call())
+
+    let routers = []
+    let pairs = []
+    let usds = []
+    let configs = []
+    const tokens = Object.values(await center.methods.getAllTokens().call())
+    if (payments) {
+      for (let tokenAddr of tokens) {
+        const token = Object.values(await center.getToken(tokenAddr).call())
+        routers.push(token[1])
+        pairs.push(token[2])
+        usds.push(token[3])
+        configs.push(token)
+      }
+    }
 
     return {
       ...(full ? filterMethods(center.methods) : {}),
@@ -119,9 +155,11 @@ export const useCenter = () => {
       layout: market[3],
       mintFee: await center.methods.mintFee().call(),
       txFee: await center.methods.txFee().call(),
-      tokens: await center.methods.getTokens().call(),
+      collections: Object.values(await center.methods.getAllCollections().call()),
+      primary: Object.values(await center.methods.getTokens().call()),
       meta: await center.methods.getMeta().call(),
-      tokens: Object.values(await center.methods.getAllTokens().call()), // token, router, pair, pairToken, usdToken
+      tokens,
+      configs
     }
   }
 
