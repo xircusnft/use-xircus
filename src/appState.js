@@ -12,10 +12,14 @@ export const appState = {
   isAuthed: false,
   user: false,
   token: false,
+  authHeaders: {},
+
+  item: false,
 
   layout: 'Standard',
   market: false,
   current: false,
+  referral: '',
 
   deployers: false,
   networks: [],

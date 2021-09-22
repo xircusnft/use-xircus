@@ -2,6 +2,21 @@ const marketActions = {
   getMarket: async(store, url) => {
     return await store.actions.requestApi('GET', `marketplace/${url}`)
   },
+  getMarketUsers: async(store, url) => {
+    return await store.actions.requestApi('GET', `marketplace/${url}/users`)
+  },
+  getMarketLeaderboard: async(store, url) => {
+    return false
+  },
+  getMarketChallenges: async(store, url) => {
+    return false
+  },
+  getMarketInsights: async(store, url) => {
+    return false
+  },
+  updateMarketTheme: async(store, url) => {
+    return false
+  },
   setMarket: (store, market) => {
     if (market && market.name) {
       const networks = store.actions.getNetworks()

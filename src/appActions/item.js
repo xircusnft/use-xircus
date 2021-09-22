@@ -1,4 +1,18 @@
+const COLLECTION_TYPES = {
+  SINGLE: 'SINGLE', // Regular ERC721
+  MULTIPLE: 'MULTIPLE', // Regular ERC1155
+  MUSIC: 'MUSIC', // Combination of subscription and track selling
+  SUBSCRIPTION: 'SUBSCRIPTION', // Subscription only e.g fanbase
+  TIERS: 'TIERS',
+  PLAYTOEARN: 'PLAYTOEARN',
+  NFTEMITTING: 'NFTEMITTING', //
+  TOKENEMITTING: 'TOKENEMITTING',
+  DAO: 'DAO'
+  NFTDAO: 'NFTDAO',
+}
+
 const itemActions = {
+  collectionTypes: () => COLLECTION_TYPES,
   uploadIPFS: async(store, file) => {
     const formData = new FormData()
     formData.append('path', file)
@@ -37,12 +51,8 @@ const itemActions = {
       return { status: false, message: 'Market Not Found' }
     }
   },
-  getUserItems: async(store, filters = {}) => {
-    if (store.user && store.user._id) {
-      return await store.actions.requestApi('GET', `u/${store.user._id}/items`, filters)
-    } else {
-      return { status: false, message: 'User Not Found' }
-    }
+  getUserItems: async(store, userId, marketId, filters = {}) => {
+    return await store.actions.requestApi('GET', `user/${userId}/items`, { market: marketId, ...filters })
   },
   getItemBySlug: async(store, slug) => {
     return await store.actions.requestApi('GET', `item/slug/${slug}`)
@@ -52,7 +62,60 @@ const itemActions = {
   },
   getItemByUrl: async(store, url) => {
     return await store.actions.requestApi('GET', `item/${url}`)
-  }
+  },
+  setItem: async(store, item) => {
+    // store the item to storage for backup or resume mint
+    store.setState({ item }, store.actions.saveState)
+  },
+  mintItem: async(store, wallet, collectionAddr, item, collectionType = COLLECTION_TYPES.SINGLE) => {
+    try {
+      if (wallet.status != 'connected') {
+        return { status: false, message: 'Wallet Not Connected' }
+      }
+
+      let collection = false
+
+
+      switch (collectionType) {
+        case COLLECTION_TYPES.SINGLE:
+          collection = await store.actions.getERC721(wallet, collectionAddr)
+          break;
+        case COLLECTION_TYPES.MULTIPLE:
+          collection = await store.actions.getERC1155(wallet, collectionAddr)
+          break;
+        default:
+
+      }
+
+      // CONVERT PRICES TO WEI
+      const name = `${item.name} ${item.legend} ${item.category}`
+      let priceWei = 0
+
+      switch (item.listing) {
+        // TOKEN ONLY
+        case 1:
+          priceWei = await store.actions.getERC20ToWei(wallet, item.token, item.price)
+          break;
+        // USD TOKEN
+        case 2:
+          priceWei = await store.actions.getERC20ToWei(wallet, item.usd, item.price)
+          break;
+        // WEI
+        case 3:
+
+          break;
+        default:
+
+      }
+
+      if (collection) {
+
+      }
+
+    } catch (e) {
+
+    }
+  },
 }
 
 export default itemActions

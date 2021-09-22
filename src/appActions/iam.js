@@ -5,13 +5,24 @@
 // INTERNAL KYC
 
 const iamActions = {
+  setReferral: async(store, referral) => {
+    store.setState({ referral })
+  },
   getAddress: async(store, address) => {
-    return await store.actions.requestApi('POST', `user/${address}`)
+    return await store.actions.requestApi(
+      'POST',
+      `user/${address}`,
+      { market: store.state.market._id, ref: store.state.referral }
+    )
   },
   login: async(store, wallet) => {
     const reply = await store.actions.getAddress(wallet.account)
     if (reply.status) {
-      store.setState({ isSigned: true, user: reply.user, token: false })
+      store.setState({
+        isSigned: true,
+        user: reply.user,
+        token: false
+      })
     }
     return reply
   },
@@ -49,7 +60,8 @@ const iamActions = {
         isSigned: true,
         token: reply.token,
         wallet: reply.user.address,
-        user: reply.user
+        user: reply.user,
+        authHeaders: { Authorization: `Bearer ${reply.token}` }
       })
     }
     return reply
@@ -59,24 +71,14 @@ const iamActions = {
   },
   updateProfile: async(store, profile) => {
     if (store.state.isAuthed) {
-      return await store.actions.requestApi(
-        'POST',
-        'profile',
-        profile,
-        { Authorization: `Bearer: ${store.state.token}` }
-      )
+      return await store.actions.requestApi('POST', 'profile', profile, store.state.authHeaders)
     } else {
       return false
     }
   },
   updatePhotos: async(store, photos) => {
     if (store.state.isAuthed) {
-      return await store.actions.requestApi(
-        'POST',
-        'profile/photos',
-        photos,
-        { Authorization: `Bearer: ${store.state.token}` }
-      )
+      return await store.actions.requestApi('POST', 'profile/photos', photos, store.state.authHeaders)
     } else {
       return false
     }
